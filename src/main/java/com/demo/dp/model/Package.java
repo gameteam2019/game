@@ -5,6 +5,7 @@ public class Package {
     private int targetNodeIndex;
     private PkgPriority priority;
     private int startTick;
+    private Route route;
 
     public int getStartNodeIndex() {
         return startNodeIndex;
@@ -36,5 +37,13 @@ public class Package {
 
     public void setStartTick(int startTick) {
         this.startTick = startTick;
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 }

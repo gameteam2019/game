@@ -1,10 +1,15 @@
 package com.demo.dp.model;
 
+import java.util.List;
+
 public class Node {
 
     private int bandWidth;
     private int capacity;
     private Package[][] priorityQueue;
+    private List<Package> finishedPackages;
+    private Package[][] awaitQueue;
+
 
     public Node(int bandWidth, int capacity) {
         this.bandWidth = bandWidth;
