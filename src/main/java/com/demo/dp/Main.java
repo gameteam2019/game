@@ -49,6 +49,8 @@ public class Main {
     }
 
     private static List<String[]> calculate(List<String[]> packages, List<String[]> nodes, List<String[]> delays) {
+        RouteServer routeServer = new RouteServer();
+        packages =  routeServer.calculate(packages, nodes, delays);
         return  packages;
     }
 
