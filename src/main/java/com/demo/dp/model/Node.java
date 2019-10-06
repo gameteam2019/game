@@ -11,19 +11,31 @@ public class Node {
     private int bandWidth;
     private int capacity;
     private Package[][] priorityQueue;
-    private List<Package> finishedPackages;
-
-
-
+    private Package[][] finishedPriorityPackages;
     private List<Package> awaitPackages; //需要保证awaitPacks是按照实际出发时间有序排列
-    private Queue<Package> lossQueue = new LinkedList<Package>();
-
+    private Queue<Package> lossQueue = new LinkedList<Package>();//没有重复
+    private Package[][] historyLossPriorityQueue;//历史上所有的丢包记录,会有重复
+    public Node(int id,int bandWidth, int capacity) {
+        this.bandWidth = bandWidth;
+        this.capacity = capacity;
+        this.id = id;
+        priorityQueue = new Package[3][capacity];
+    }
     public Node(Node node) {
         this.bandWidth = node.getBandWidth();
         this.capacity = node.getCapacity();
         this.id = node.getId();
         this.priorityQueue =node.getPriorityQueue();
     }
+    public Package[][] getHistoryLossPriorityQueue() {
+        return historyLossPriorityQueue;
+    }
+
+    public void setHistoryLossPriorityQueue(Package[][] historyLossPriorityQueue) {
+        this.historyLossPriorityQueue = historyLossPriorityQueue;
+    }
+
+
 
     public Queue<Package> getLossQueue() {
         return lossQueue;
@@ -33,12 +45,7 @@ public class Node {
         this.lossQueue = lossQueue;
     }
 
-    public Node(int id,int bandWidth, int capacity) {
-        this.bandWidth = bandWidth;
-        this.capacity = capacity;
-        this.id = id;
-        priorityQueue = new Package[3][capacity];
-    }
+
     public int getId() {
         return id;
     }
@@ -59,12 +66,12 @@ public class Node {
         this.priorityQueue = priorityQueue;
     }
 
-    public List<Package> getFinishedPackages() {
-        return finishedPackages;
+    public Package[][] getFinishedPriorityPackages() {
+        return finishedPriorityPackages;
     }
 
-    public void setFinishedPackages(List<Package> finishedPackages) {
-        this.finishedPackages = finishedPackages;
+    public void setFinishedPriorityPackages(Package[][] finishedPriorityPackages) {
+        this.finishedPriorityPackages = finishedPriorityPackages;
     }
 
     public List<Package> getAwaitPackages() {

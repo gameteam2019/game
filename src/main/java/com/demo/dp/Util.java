@@ -6,7 +6,7 @@ import com.demo.dp.model.Package;
 import java.util.*;
 
 public class Util {
-    public static Network updateNetWorkByRoute(final List<Node> route, final Network oldNetwork, boolean isTrueProcess) {
+    public static Network updateNetWorkByRoute(final Map<Integer, EnterNode> solution, final Network oldNetwork, boolean isTrueProcess) {
         //根据路由更新网络，注意这个方法会被SA算法用，oldNetwork不能被改变，需要生成新的网络，需要深拷贝
         Network newNetWork = isTrueProcess ? oldNetwork : deepCopyNetWork(oldNetwork);
 
@@ -33,11 +33,86 @@ public class Util {
 
     }
 
-    public static double calcProfit(final Map<Integer, EnterNode> solution, final Network network) {
+
+    /*
+    由于SA算法是计算最小值的
+     */
+    public static double calcProfit(final Map<Integer, EnterNode> solution, final Network oldNetwork,boolean isMin) {
         //TO DO......
         //计算本次调度的收益
+        long profit = 0;
+        Network newNetwork = updateNetWorkByRoute(solution, oldNetwork,false);
+
+        Node[] oldNodes = oldNetwork.getNodes();
+        Node[] newNodes = newNetwork.getNodes();
+        for (int nodeIndex = 0; nodeIndex < newNodes.length; nodeIndex++) {
+            Node oldNode = oldNodes[nodeIndex];
+            Node newNode = newNodes[nodeIndex];
+            //1.计算丢包的收益
+            profit = profit + calcLossProfit(oldNode, newNode,newNodes.length);
+            //2.计算送出的包的收益
+            profit = profit + calcSendProfit(oldNode, newNode);
+            //3.计算延迟的收益
+            profit = profit + calcDelayProfit(newNode);
+
+        }
+        profit = profit + calcLoadBalance(newNetwork);
+        return isMin?-1*profit:profit;
+    }
+
+    private static long calcLoadBalance(Network newNetwork) {
+        //TO DO...
+        {
+            //求网络结点中所有结点上包个数的方差,方差越小收益越大
+
+        }
         return 0;
     }
+
+    private static long calcDelayProfit(Node node) {
+        //TO Do...
+        {
+
+            //可以简单判断下：
+            // 1.当前的延迟
+            // 2.如果队列前面有阻挡,则延迟取最大值
+        }
+        return 0;
+    }
+
+    private static long calcSendProfit(Node oldNode, Node newNode) {
+        int sendHigh = newNode.getFinishedPriorityPackages()[PkgPriority.HIGH.value()].length-
+                oldNode.getFinishedPriorityPackages()[PkgPriority.HIGH.value()].length;
+        int sendMiddle = newNode.getFinishedPriorityPackages()[PkgPriority.MIDDLE.value()].length-
+                oldNode.getFinishedPriorityPackages()[PkgPriority.MIDDLE.value()].length;
+        int sendLow = newNode.getFinishedPriorityPackages()[PkgPriority.LOW.value()].length-
+                oldNode.getFinishedPriorityPackages()[PkgPriority.LOW.value()].length;
+        return sendHigh*Consts.SEND_HIGH_WEIGHT+sendMiddle*Consts.SEND_MIDDLE_WEIGHT+sendLow*Consts.SEND_LOW_WEIGHT;
+    }
+
+    private static long calcLossProfit(Node oldNode, Node newNode,int nodeNum) {
+        if (isReachLossDeadLine(newNode,nodeNum)) {
+            return Consts.NOT_ACCEPT;
+
+        }
+        int lossHigh = newNode.getHistoryLossPriorityQueue()[PkgPriority.HIGH.value()].length -
+                oldNode.getHistoryLossPriorityQueue()[PkgPriority.HIGH.value()].length;
+        int lossMiddle = newNode.getHistoryLossPriorityQueue()[PkgPriority.MIDDLE.value()].length -
+                oldNode.getHistoryLossPriorityQueue()[PkgPriority.MIDDLE.value()].length;
+        int lossLow = newNode.getHistoryLossPriorityQueue()[PkgPriority.LOW.value()].length -
+                oldNode.getHistoryLossPriorityQueue()[PkgPriority.LOW.value()].length;
+        return lossHigh*Consts.LOSS_HIGH_WEIGHT + lossMiddle*Consts.LOSS_MIDDLE_WEIGHT+lossLow*Consts.LOSS_LOW_WEIGHT;
+
+    }
+
+    private static boolean isReachLossDeadLine(Node newNode, int nodeNum) {
+        //TO DO....
+        {
+            //判断丢包率达到阈值
+        }
+        return false;
+    }
+
 
     public static Set<Integer> generateRandomList(int num, int min, int max) {
         //TO DO....

@@ -21,7 +21,7 @@ public class SaDispather {
         Map<Integer, List<EnterNode>> solutionSpace = initSolutionSpace(oldNetwork, nextDelays);
         //2.生成初解
         Map<Integer, EnterNode> oldSolution = generateFirstSolution(solutionSpace);
-        double oldProfit = Util.calcProfit(oldSolution, oldNetwork);
+        double oldProfit = Util.calcProfit(oldSolution, oldNetwork,true);
         //3.
         double t = BEGIN_T;
         int randomNum = 0;
@@ -31,7 +31,7 @@ public class SaDispather {
         while (t > END_T && outLoop < OUTLOOP) {
             for (int iloop = 1; iloop < INNERLOOP; iloop++) {
                 Map<Integer, EnterNode> nextSolution = generateNextSolution(oldSolution, solutionSpace);
-                double nextProfit = Util.calcProfit(nextSolution, oldNetwork);
+                double nextProfit = Util.calcProfit(nextSolution, oldNetwork,true);
                 if (nextProfit < oldProfit) {
                     oldSolution = nextSolution;
                     oldProfit = nextProfit;
@@ -43,6 +43,9 @@ public class SaDispather {
                     }
 
                 } else {
+                    if (nextProfit == Consts.NOT_ACCEPT) {
+                        continue;
+                    }
                     double acceptProbability = Math.random();
                     double acceptLimit = Math.exp(-1 * (oldProfit - nextProfit) / t);
                     if (acceptProbability > acceptLimit) {

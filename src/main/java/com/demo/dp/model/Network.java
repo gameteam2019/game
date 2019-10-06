@@ -4,9 +4,6 @@ public class Network {
     private final Node[] nodes = new Node[Consts.MAX_NODES];
     private Delays delays;
     private int ticks;
-
-
-
     private boolean isBeginProcessLoss = false;
 
     public Node[] getNodes() {
