@@ -1,6 +1,7 @@
 package com.demo.dp.model;
 
 public class Package {
+    private int id;
     private int startNodeIndex;
     private int targetNodeIndex;
     private PkgPriority priority;
@@ -45,5 +46,12 @@ public class Package {
 
     public void setRoute(Route route) {
         this.route = route;
+    }
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

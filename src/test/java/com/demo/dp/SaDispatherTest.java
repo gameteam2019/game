@@ -1,11 +1,9 @@
 package com.demo.dp;
 
+import com.demo.dp.model.Node;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SaDispatherTest {
     @Test
@@ -37,5 +35,24 @@ public class SaDispatherTest {
             test.add(i);
         }
         System.out.println(test.contains(22));
+    }
+    @Test
+    public void testIteratorMap() {
+        Map<String,Integer> test = new HashMap<>();
+        for (int i = 0; i < 10; i++) {
+            test.put(i+":", i);
+        }
+        Iterator<Map.Entry<String, Integer>> iterator = test.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String,Integer> next = iterator.next();
+            if (next.getValue().equals(9)) {
+                System.out.println("remove:"+next.getValue());
+                iterator.remove();
+                continue;
+            }
+            System.out.println(next.getValue());
+
+        }
+        System.out.println("Map.size:"+test.size());
     }
 }
