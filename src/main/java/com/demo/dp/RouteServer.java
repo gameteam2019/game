@@ -1,8 +1,10 @@
 package com.demo.dp;
 
 import com.demo.dp.model.Network;
+import com.demo.dp.model.Node;
 
 import java.util.List;
+import java.util.Map;
 
 public class RouteServer {
 
@@ -26,11 +28,14 @@ public class RouteServer {
 
     private Network dispatchNetwork(Network network) {
         //TO DO.....
-        //利用SA算法调度生成新的Network
-
-
-
-        return new Network(network.getTicks() + 1);
+        //利用SA算法得到本次tick的最优解
+        try {
+            SaDispather saDispather = new SaDispather();
+            Map<Integer, Node> bestRoute = saDispather.dispatchNetwork(network);
+            return new Network(network.getTicks() + 1);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private boolean checkFinish(Network network) {
