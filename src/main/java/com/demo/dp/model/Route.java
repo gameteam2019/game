@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Route {
     private int id;
     private int actualStart;
-    private LinkedList<Integer> pathNodes;//队列
+    private LinkedList<EnterNode> pathNodes;//队列
 
     public int getId() {
         return id;
@@ -23,11 +23,11 @@ public class Route {
         this.actualStart = actualStart;
     }
 
-    public LinkedList<Integer> getPathNodes() {
+    public LinkedList<EnterNode> getPathNodes() {
         return pathNodes;
     }
 
-    public void setPathNodes(LinkedList<Integer> pathNodes) {
+    public void setPathNodes(LinkedList<EnterNode> pathNodes) {
         this.pathNodes = pathNodes;
     }
 

@@ -18,6 +18,13 @@ public class Node {
     private List<Package> awaitPackages; //需要保证awaitPacks是按照实际出发时间有序排列
     private Queue<Package> lossQueue = new LinkedList<Package>();
 
+    public Node(Node node) {
+        this.bandWidth = node.getBandWidth();
+        this.capacity = node.getCapacity();
+        this.id = node.getId();
+        this.priorityQueue =node.getPriorityQueue();
+    }
+
     public Queue<Package> getLossQueue() {
         return lossQueue;
     }
@@ -26,7 +33,7 @@ public class Node {
         this.lossQueue = lossQueue;
     }
 
-    public Node(int bandWidth, int capacity,int id) {
+    public Node(int id,int bandWidth, int capacity) {
         this.bandWidth = bandWidth;
         this.capacity = capacity;
         this.id = id;

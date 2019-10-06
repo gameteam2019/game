@@ -1,5 +1,6 @@
 package com.demo.dp;
 
+import com.demo.dp.model.EnterNode;
 import com.demo.dp.model.Network;
 import com.demo.dp.model.Node;
 
@@ -49,7 +50,7 @@ public class RouteServer {
 
             SaDispather saDispather = new SaDispather();
 
-            Map<Integer, Node> bestRoute = saDispather.dispatchNetwork(network,nextDelays);
+            Map<Integer, EnterNode> bestRoute = saDispather.dispatchNetwork(network,nextDelays);
             return new Network(network.getTicks() + 1);
         } catch (Exception e) {
             return null;

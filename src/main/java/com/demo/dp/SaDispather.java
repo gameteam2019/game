@@ -15,22 +15,22 @@ public class SaDispather {
     private final double UPDATERATIO = 0.2;
 
 
-    public Map<Integer, Node> dispatchNetwork(Network oldNetwork,int[][] nextDelays) throws Exception {
+    public Map<Integer, EnterNode> dispatchNetwork(Network oldNetwork,int[][] nextDelays) throws Exception {
         //TO DO.....
         //1.初始化解空间
-        Map<Integer, List<Node>> solutionSpace = initSolutionSpace(oldNetwork, nextDelays);
+        Map<Integer, List<EnterNode>> solutionSpace = initSolutionSpace(oldNetwork, nextDelays);
         //2.生成初解
-        Map<Integer, Node> oldSolution = generateFirstSolution(solutionSpace);
+        Map<Integer, EnterNode> oldSolution = generateFirstSolution(solutionSpace);
         double oldProfit = Util.calcProfit(oldSolution, oldNetwork);
         //3.
         double t = BEGIN_T;
         int randomNum = 0;
         int outLoop = 0;
-        Map<Integer, Node> bestRoute = oldSolution;
+        Map<Integer, EnterNode> bestRoute = oldSolution;
         double bestProfit = oldProfit;
         while (t > END_T && outLoop < OUTLOOP) {
             for (int iloop = 1; iloop < INNERLOOP; iloop++) {
-                Map<Integer, Node> nextSolution = generateNextSolution(oldSolution, solutionSpace);
+                Map<Integer, EnterNode> nextSolution = generateNextSolution(oldSolution, solutionSpace);
                 double nextProfit = Util.calcProfit(nextSolution, oldNetwork);
                 if (nextProfit < oldProfit) {
                     oldSolution = nextSolution;
@@ -62,20 +62,20 @@ public class SaDispather {
         return bestRoute;
     }
 
-    private Map<Integer, Node> generateNextSolution(Map<Integer, Node> oldSolution, Map<Integer, List<Node>> solutionSpace) {
+    private Map<Integer, EnterNode> generateNextSolution(Map<Integer, EnterNode> oldSolution, Map<Integer, List<EnterNode>> solutionSpace) {
         //TO Do......
         //随机选取旧解中的一部分(按照比例)
         int updateNum = (int) (oldSolution.size() * UPDATERATIO);
         updateNum = updateNum < 1 ? 1 : updateNum;
         Set<Integer> updateIndexs = Util.generateRandomList(updateNum, 0, oldSolution.size() - 1);
-        Map<Integer, Node> newSolution = Util.deepCopySolution(oldSolution);
+        Map<Integer, EnterNode> newSolution = Util.deepCopySolution(oldSolution);
         int cnt = 0;
-        Iterator<Map.Entry<Integer, Node>> iterator = newSolution.entrySet().iterator();
+        Iterator<Map.Entry<Integer, EnterNode>> iterator = newSolution.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<Integer, Node> packNextNode = iterator.next();
+            Map.Entry<Integer, EnterNode> packNextNode = iterator.next();
             if (updateIndexs.contains(cnt)) {
                 int pid = packNextNode.getKey();
-                Node randNode = Util.getNextRandNode(packNextNode.getValue(), solutionSpace.get(pid));
+                EnterNode randNode = Util.getNextRandNode(packNextNode.getValue(), solutionSpace.get(pid));
                 //对于初始化的数据包,有可能需要继续等待,则从解中移除
                 if (randNode.getId() == Consts.INVALID) {
                     iterator.remove();
@@ -89,7 +89,7 @@ public class SaDispather {
     }
 
 
-    private Map<Integer, Node> generateFirstSolution(Map<Integer, List<Node>> solutionSpace) throws Exception {
+    private Map<Integer, EnterNode> generateFirstSolution(Map<Integer, List<EnterNode>> solutionSpace) throws Exception {
 
         //TO Do......
         //可以先随机生成,但是看到网上有人说可以优化初解，比如用爬山先生成一个局部优解最为起点
@@ -98,10 +98,10 @@ public class SaDispather {
             return null;
         }
 
-        Map<Integer, Node> result = new HashMap<Integer, Node>(solutionSpace.size());
-        for (Map.Entry<Integer, List<Node>> pack : solutionSpace.entrySet()) {
+        Map<Integer, EnterNode> result = new HashMap<Integer, EnterNode>(solutionSpace.size());
+        for (Map.Entry<Integer, List<EnterNode>> pack : solutionSpace.entrySet()) {
             int pid = pack.getKey();
-            List<Node> allReachableNodes = solutionSpace.get(pid);
+            List<EnterNode> allReachableNodes = solutionSpace.get(pid);
             if (null == allReachableNodes || allReachableNodes.size() == 0) {
                 System.out.println("solutions is Invalid:" + pid);
                 throw new Exception("solutions is Invalid:");
@@ -117,17 +117,17 @@ public class SaDispather {
         return result;
     }
 
-    private Map<Integer, List<Node>> initSolutionSpace(final Network oldNetwork,int[][] nextDelays) {
-        Map<Integer, List<Node>> solutionSpace = new HashMap<Integer, List<Node>>();
+    private Map<Integer, List<EnterNode>> initSolutionSpace(final Network oldNetwork,int[][] nextDelays) {
+        Map<Integer, List<EnterNode>> solutionSpace = new HashMap<Integer, List<EnterNode>>();
         for (Node node : oldNetwork.getNodes()) {
             initAwaitPacks(node.getAwaitPackages(), solutionSpace,oldNetwork);
-            initInNetPacks(node.getPriorityQueue(), solutionSpace,oldNetwork,nextDelays);
+            initInNetPacks(node, solutionSpace,oldNetwork,nextDelays);
         }
         return solutionSpace;
     }
 
-    private void initInNetPacks(Package[][] priorityQueue, Map<Integer, List<Node>> solutionSpace,Network oldNetwork,int[][] nextDelays) {
-        List<Package> needSendPacks = Util.takeOutSendPacks(priorityQueue, oldNetwork);
+    private void initInNetPacks(Node node, Map<Integer, List<EnterNode>> solutionSpace,Network oldNetwork,int[][] nextDelays) {
+        List<Package> needSendPacks = Util.takeOutSendPacks(node, oldNetwork);
         for (Package pack : needSendPacks) {
             solutionSpace.put(pack.getId(), Util.generateValidNextNodes(pack, oldNetwork,nextDelays));
         }
@@ -136,7 +136,7 @@ public class SaDispather {
     }
 
 
-    private void initAwaitPacks(List<Package> awaitPacks, Map<Integer, List<Node>> solutionSpace,Network oldNetwork) {
+    private void initAwaitPacks(List<Package> awaitPacks, Map<Integer, List<EnterNode>> solutionSpace,Network oldNetwork) {
         if (awaitPacks == null || awaitPacks.size() < 1) {
             return;
         }
@@ -146,9 +146,10 @@ public class SaDispather {
             if (pack.getStartTick() > nextTick) {
                 break;
             }
-            List<Node> reachNodes = new ArrayList<Node>(2);
-            reachNodes.add(Consts.INVALIDNODE);
-            reachNodes.add(oldNetwork.getNodes()[pack.getTargetNodeIndex()]);
+            List<EnterNode> reachNodes = new ArrayList<EnterNode>(2);
+            reachNodes.add(new EnterNode(Consts.INVALIDNODE,nextTick,Consts.FIRSTDELAY,QuePriority.UNKNOWN));
+            Node nextNode = oldNetwork.getNodes()[pack.getTargetNodeIndex()];
+            reachNodes.add(new EnterNode(nextNode,nextTick,Consts.FIRSTDELAY,QuePriority.UNKNOWN));
             solutionSpace.put(pack.getId(), reachNodes);
         }
 
