@@ -39,17 +39,15 @@ public class RouteServer {
 
     private Network dispatchNetwork(Network network,int[][] nextDelays) {
         //TO DO.....
-        //利用SA算法得到本次tick的最优解
-        try {
 
+        try {
             if (network.isBeginProcessLoss()) {
                 return dispatchLossPacks(network);
             }
-
+            //利用SA算法得到本次tick的最优解
             SaDispather saDispather = new SaDispather();
-
             Solution bestRoute = saDispather.dispatchNetwork(network,nextDelays);
-            return new Network(network.getTicks() + 1);
+            return new Network(network.getTicks() + 1,network.getPackCnt());
         } catch (Exception e) {
             return null;
         }
@@ -62,7 +60,7 @@ public class RouteServer {
      */
     private Network dispatchLossPacks(Network network) {
         //TO DO.....
-        return new Network(network.getTicks()+1);
+        return new Network(network.getTicks()+1,network.getPackCnt());
     }
 
     private boolean checkFinish(Network network) {
@@ -82,6 +80,6 @@ public class RouteServer {
             //delay是不是需要提前生成
         }
 
-        return new Network(0);
+        return new Network(0,0);
     }
 }

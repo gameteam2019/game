@@ -5,6 +5,27 @@ public class Network {
     private Delays delays;
     private int ticks;
     private boolean isBeginProcessLoss = false;
+    private int lossIndex;
+
+    private int packCnt;
+
+    public int getLossIndex() {
+        return lossIndex;
+    }
+
+    public void setLossIndex(int lossIndex) {
+        this.lossIndex = lossIndex;
+    }
+
+    public int getPackCnt() {
+        return packCnt;
+    }
+
+    public void setPackCnt(int packCnt) {
+        this.packCnt = packCnt;
+    }
+
+
 
     public Node[] getNodes() {
         return nodes;
@@ -23,8 +44,9 @@ public class Network {
     }
 
 
-    public Network(int ticks) {
+    public Network(int ticks,int packCnt) {
         this.ticks = ticks;
+        this.packCnt = packCnt;
 
     }
 

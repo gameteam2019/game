@@ -69,17 +69,25 @@ public class SaDispather {
 
     private Solution generateNextSolution(Solution oldSolution, Solution solutionSpace) {
         //TO Do......
-        //随机选取旧解中的一部分(按照比例)
+        //随机选取旧解中的一部分(按照比例)、
         int updateNum = (int) (oldSolution.getAllPackNum() * UPDATERATIO);
         updateNum = updateNum < 1 ? 1 : updateNum;
         Set<Integer> updateIndexs = Util.generateRandomList(updateNum, 0, oldSolution.getAllPackNum() - 1);
         Solution newSolution = Util.deepCopySolution(oldSolution);
+        {
+            //对于可以出去的只有一个解的就不要参与随机了，看下怎么实现
+        }
         {
 
 
             //TO Do......
 
         }
+        {
+            //TO Do......
+
+        }
+
 //        int cnt = 0;
 //        Iterator<Map.Entry<Integer, EnterNode>> iterator = newSolution.entrySet().iterator();
 //        while (iterator.hasNext()) {
@@ -107,6 +115,11 @@ public class SaDispather {
         if (solutionSpace == null || solutionSpace.getAllPackNum()==0) {
             System.out.println("solutionSpace is Invalid");
             return null;
+        }
+
+        //TO DO......
+        {
+            //需要对每个结点上的解做优先级和编号排序的处理
         }
         return null;
 

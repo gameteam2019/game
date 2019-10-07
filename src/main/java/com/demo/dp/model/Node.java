@@ -6,40 +6,46 @@ import java.util.Queue;
 
 public class Node {
 
-
     private int id;
+    private int index;
     private int bandWidth;
     private int capacity;
-    private Package[][] priorityQueue;
-    private Package[][] finishedPriorityPackages;
+    private Queue<Package>[] priorityQueue;
+    private Queue<Package>[] finishedPriorityPackages;
     private List<Package> awaitPackages; //需要保证awaitPacks是按照实际出发时间有序排列
     private Queue<Package> lossQueue = new LinkedList<Package>();//没有重复
-    private Package[][] historyLossPriorityQueue;//历史上所有的丢包记录,会有重复
+    private Queue<Package>[] historyLossPriorityQueue;//历史上所有的丢包记录,会有重复
 
 
 
     private Queue<Package> opticalFiber = new LinkedList<Package>();//在队列中缓存的
-    public Node(int id,int bandWidth, int capacity) {
+    public Node(int id,int bandWidth, int capacity,int index) {
         this.bandWidth = bandWidth;
         this.capacity = capacity;
         this.id = id;
-        priorityQueue = new Package[3][capacity];
+        this.index = index;
+        initQueueArray(this.priorityQueue);
+        initQueueArray(this.historyLossPriorityQueue);
     }
-    public Node(Node node) {
-        this.bandWidth = node.getBandWidth();
-        this.capacity = node.getCapacity();
-        this.id = node.getId();
-        this.priorityQueue =node.getPriorityQueue();
+
+    private void initQueueArray(Queue<Package>[] queArray) {
+        queArray = (Queue<Package>[]) new Package[3];
+        queArray[0] = new LinkedList<Package>();
+        queArray[1] = new LinkedList<Package>();
+        queArray[2] = new LinkedList<Package>();
+
     }
-    public Package[][] getHistoryLossPriorityQueue() {
+    public Queue<Package>[] getHistoryLossPriorityQueue() {
         return historyLossPriorityQueue;
     }
 
-    public void setHistoryLossPriorityQueue(Package[][] historyLossPriorityQueue) {
+    public void setHistoryLossPriorityQueue(Queue<Package>[] historyLossPriorityQueue) {
         this.historyLossPriorityQueue = historyLossPriorityQueue;
     }
 
-
+    public int getIndex() {
+        return index;
+    }
 
     public Queue<Package> getLossQueue() {
         return lossQueue;
@@ -62,19 +68,19 @@ public class Node {
         this.capacity = capacity;
     }
 
-    public Package[][] getPriorityQueue() {
+    public Queue<Package>[] getPriorityQueue() {
         return priorityQueue;
     }
 
-    public void setPriorityQueue(Package[][] priorityQueue) {
+    public void setPriorityQueue(Queue<Package>[] priorityQueue) {
         this.priorityQueue = priorityQueue;
     }
 
-    public Package[][] getFinishedPriorityPackages() {
+    public Queue<Package>[] getFinishedPriorityPackages() {
         return finishedPriorityPackages;
     }
 
-    public void setFinishedPriorityPackages(Package[][] finishedPriorityPackages) {
+    public void setFinishedPriorityPackages(Queue<Package>[] finishedPriorityPackages) {
         this.finishedPriorityPackages = finishedPriorityPackages;
     }
 
