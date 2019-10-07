@@ -6,12 +6,15 @@ import com.demo.dp.model.Package;
 import java.util.*;
 
 public class Util {
-    public static Network updateNetWorkByRoute(final Map<Integer, EnterNode> solution, final Network oldNetwork, boolean isTrueProcess) {
+    public static Network updateNetWorkByRoute(final Solution solution, final Network oldNetwork, boolean isTrueProcess) {
         //根据路由更新网络，注意这个方法会被SA算法用，oldNetwork不能被改变，需要生成新的网络，需要深拷贝
         Network newNetWork = isTrueProcess ? oldNetwork : deepCopyNetWork(oldNetwork);
 
         {
-            //TO DO......
+            sendPackToOpticalFiber(newNetWork,solution);
+            sendPackToNode(newNetWork);
+            sendInitPackToNode(newNetWork);
+
         }
 
         //如果是一次真实的调度,则需要重新排序每个结点中等待的数据包的顺序,按照计划出发时间重新排序
@@ -21,6 +24,18 @@ public class Util {
 
 
         return newNetWork;
+    }
+
+    private static void sendInitPackToNode(Network newNetWork) {
+
+    }
+
+    private static void sendPackToNode(Network newNetWork) {
+    }
+
+    private static void sendPackToOpticalFiber(Network newNetWork, Solution solution) {
+
+
     }
 
     private static Network deepCopyNetWork(Network oldNetwork) {
@@ -37,7 +52,7 @@ public class Util {
     /*
     由于SA算法是计算最小值的
      */
-    public static double calcProfit(final Map<Integer, EnterNode> solution, final Network oldNetwork,boolean isMin) {
+    public static double calcProfit(final Solution solution, final Network oldNetwork,boolean isMin) {
         //TO DO......
         //计算本次调度的收益
         long profit = 0;
@@ -74,7 +89,7 @@ public class Util {
         {
 
             //可以简单判断下：
-            // 1.当前的延迟
+            // 1.每个包的延迟
             // 2.如果队列前面有阻挡,则延迟取最大值
         }
         return 0;
@@ -120,9 +135,9 @@ public class Util {
         return null;
     }
 
-    public static Map<Integer, EnterNode> deepCopySolution(Map<Integer, EnterNode> oldSolution) {
+    public static Solution deepCopySolution(Solution oldSolution) {
         //TO DO....
-        Map<Integer, EnterNode> newSolution = new HashMap<>();
+        Solution newSolution = new Solution();
         return newSolution;
     }
 
@@ -134,7 +149,7 @@ public class Util {
 
 
     /*
-    非丢包流程,取出当前结点中需要调度的数据包
+    非丢包流程,取出当前结点中需要调度的数据包,按照优先级大小有序排列
      */
     public static List<Package> takeOutSendPacks(Node netWorkNode, Network oldNetwork) {
         //参考文档8.4规则
@@ -240,7 +255,7 @@ public class Util {
         }
         if (nextNodes.size() == 0) {
             System.out.println("all route is broken");
-            nextNodes.add(new EnterNode(Consts.INVALIDNODE, Consts.INVALID, Consts.INVALID,QuePriority.UNKNOWN));
+            nextNodes.add(new EnterNode(Consts.WAITNODE, Consts.INVALID, Consts.INVALID,QuePriority.UNKNOWN));
 
         }
         return nextNodes;

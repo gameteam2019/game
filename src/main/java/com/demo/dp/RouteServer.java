@@ -1,11 +1,9 @@
 package com.demo.dp;
 
-import com.demo.dp.model.EnterNode;
 import com.demo.dp.model.Network;
-import com.demo.dp.model.Node;
+import com.demo.dp.model.Solution;
 
 import java.util.List;
-import java.util.Map;
 
 public class RouteServer {
 
@@ -50,7 +48,7 @@ public class RouteServer {
 
             SaDispather saDispather = new SaDispather();
 
-            Map<Integer, EnterNode> bestRoute = saDispather.dispatchNetwork(network,nextDelays);
+            Solution bestRoute = saDispather.dispatchNetwork(network,nextDelays);
             return new Network(network.getTicks() + 1);
         } catch (Exception e) {
             return null;

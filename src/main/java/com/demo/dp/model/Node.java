@@ -15,6 +15,10 @@ public class Node {
     private List<Package> awaitPackages; //需要保证awaitPacks是按照实际出发时间有序排列
     private Queue<Package> lossQueue = new LinkedList<Package>();//没有重复
     private Package[][] historyLossPriorityQueue;//历史上所有的丢包记录,会有重复
+
+
+
+    private Queue<Package> opticalFiber = new LinkedList<Package>();//在队列中缓存的
     public Node(int id,int bandWidth, int capacity) {
         this.bandWidth = bandWidth;
         this.capacity = capacity;
@@ -91,5 +95,12 @@ public class Node {
 
     public int getCapacity() {
         return capacity;
+    }
+    public Queue<Package> getOpticalFiber() {
+        return opticalFiber;
+    }
+
+    public void setOpticalFiber(Queue<Package> opticalFiber) {
+        this.opticalFiber = opticalFiber;
     }
 }
